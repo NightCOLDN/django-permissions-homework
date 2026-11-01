@@ -1,0 +1,24 @@
+# Виртуальное окружение Python
+.venv/
+env/
+venv/
+ENV/
+
+# Среда разработки GIGA IDE / JetBrains (IntelliJ)
+.idea/
+.giga/
+*.iml
+*.iws
+
+# Кэш Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Локальные файлы настроек и окружения
+.env
+db.sqlite3
+
+# Системные файлы Windows
+Thumbs.db
+desktop.ini

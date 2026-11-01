@@ -1,45 +1,32 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from advertisements.models import Advertisement
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """Serializer для пользователя."""
-
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name',
-                  'last_name',)
 
 
 class AdvertisementSerializer(serializers.ModelSerializer):
     """Serializer для объявления."""
 
-    creator = UserSerializer(
-        read_only=True,
-    )
+    # Делаем поле creator обычным read_only (подставлять его будем во ViewSet)
+    creator = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Advertisement
-        fields = ('id', 'title', 'description', 'creator',
-                  'status', 'created_at', )
-
-    def create(self, validated_data):
-        """Метод для создания"""
-
-        # Простановка значения поля создатель по-умолчанию.
-        # Текущий пользователь является создателем объявления
-        # изменить или переопределить его через API нельзя.
-        # обратите внимание на `context` – он выставляется автоматически
-        # через методы ViewSet.
-        # само поле при этом объявляется как `read_only=True`
-        validated_data["creator"] = self.context["request"].user
-        return super().create(validated_data)
+        fields = ['id', 'title', 'description', 'status', 'creator', 'created_at']
 
     def validate(self, data):
-        """Метод для валидации. Вызывается при создании и обновлении."""
+        """Метод для валидации данных при создании и обновлении объявления."""
+        status = data.get('status', 'OPEN')
+        user = self.context['request'].user
 
-        # TODO: добавьте требуемую валидацию
+        if self.context['request'].method == 'POST' or status == 'OPEN':
+            open_ads_count = Advertisement.objects.filter(creator=user, status='OPEN').count()
+
+            if open_ads_count >= 10:
+                if self.instance and self.instance.status == 'OPEN':
+                    return data
+                raise ValidationError("У вас не может быть более 10 открытых объявлений одновременно.")
 
         return data
+
