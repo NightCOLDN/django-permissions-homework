@@ -1,14 +1,16 @@
 from django.shortcuts import render
-
 from articles.models import Article
-
 
 def articles_list(request):
     template = 'articles/news.html'
-    context = {}
 
-    # используйте этот параметр для упорядочивания результатов
-    # https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.order_by
-    ordering = '-published_at'
+    # 1. Оптимизировано загружаем статьи вместе со связанными объектами Scope и тегами Tag
+    # Используем двойное подчёркивание для сквозной предзагрузки: scopes__tag
+    articles = Article.objects.all().prefetch_related('scopes__tag').order_by('-published_at')
+
+    # 2. Передаем готовый список статей в контекст шаблона
+    context = {
+        'object_list': articles
+    }
 
     return render(request, template, context)

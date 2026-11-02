@@ -76,11 +76,14 @@ WSGI_APPLICATION = 'website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'netology_m2m_relations',
+        'NAME': 'school_db',
+        'USER': 'postgres',
+        'PASSWORD': '031183',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
