@@ -2,13 +2,45 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Рецепты</title>
+    <title>Книга рецептов</title>
 </head>
 <body>
-{% for ingredient, amount in recipe.items %}
-    <p>{{ ingredient }}: {{ amount }}</p>
-{% empty %}
-    <p>Такого рецепта не знаю :(</p>
-{% endfor %}
+
+<!-- ЕСЛИ МЫ НА ГЛАВНОЙ СТРАНИЦЕ (передан список dishes) -->
+{% if dishes %}
+<h1>Добро пожаловать в книгу рецептов!</h1>
+<p>Выберите блюдо из списка ниже:</p>
+<ul>
+    {% for dish in dishes %}
+    <li>
+        <a href="/calculator/{{ dish }}/">{{ dish|title }}</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<!-- ЕСЛИ МЫ ВНУТРИ РЕЦЕПТА (передан recipe) -->
+{% elif recipe %}
+<h1>Рецепт блюда: {{ dish_name|title }}</h1>
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Ингредиент</th>
+        <th>Количество</th>
+    </tr>
+    {% for ingredient, amount in recipe.items %}
+    <tr>
+        <td>{{ ingredient }}</td>
+        <td>{{ amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<br/>
+<p><a href="/calculator/">← Вернуться к списку рецептов</a></p>
+
+<!-- ЕСЛИ БЛЮДО НЕ НАЙДЕНО -->
+{% else %}
+<h1>Такого рецепта не знаю :(</h1>
+<p><a href="/calculator/">← На главную</a></p>
+{% endif %}
+
 </body>
 </html>

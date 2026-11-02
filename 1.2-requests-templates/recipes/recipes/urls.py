@@ -1,21 +1,17 @@
-"""recipes URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
+from django.contrib import admin
 from django.urls import path
+from calculator.views import recipe_view, home_view
 
 urlpatterns = [
-    # здесь зарегистрируйте вашу view-функцию
+    path('admin/', admin.site.urls),
+
+    # 1. При переходе на самый корень сайта (http://127.0.0) откроется меню
+    path('', home_view, name='home'),
+
+    # 2. При переходе на /calculator/ тоже откроется меню
+    path('calculator/', home_view, name='calculator_home'),
+
+    # 3. При переходе на конкретное блюдо (http://127.0.0omlet/ или /calculator/omlet/)
+    path('<str:dish_name>/', recipe_view, name='recipe'),
+    path('calculator/<str:dish_name>/', recipe_view, name='recipe_alt'),
 ]
